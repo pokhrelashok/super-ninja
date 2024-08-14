@@ -9,7 +9,7 @@ void Physics::detectCollision(glm::vec2 &position, glm::vec2 &size, std::vector<
     sides.bottom = position.y + size.y > tile.position.y;
     sides.left = position.x < tile.position.x + tile.size.x;
 
-    if (sides.bottom)
+    if (sides.top && sides.right && sides.left && sides.bottom)
     {
       collisionCount++;
       sides.hasCollided = true;

@@ -61,7 +61,7 @@ int main()
   glfwSetKeyCallback(window, key_callback);
   Shader ourShader = Shader("res/shaders/common.vs", "res/shaders/common.fs");
   Texture backgroundTex = Texture("res/background.jpg");
-  Texture playerTex = Texture("res/player.png");
+  Texture playerTex = Texture("res/ball.png");
   Texture groundTex = Texture("res/ground.png");
 
   Level one = Level(ourShader, groundTex);
@@ -69,7 +69,7 @@ int main()
 
   Sprite background = Sprite(ourShader, backgroundTex, glm::vec2(0, 0), glm::vec2(SCR_WIDTH, SCR_HEIGHT), glm::vec2(800, 800));
   background.isAffectedByGravity = false;
-  Player player = Player(ourShader, playerTex, glm::vec2(0, SCR_HEIGHT - 400), glm::vec2(200, 200), glm::vec2(128, 128));
+  Player player = Player(ourShader, playerTex, glm::vec2(0, SCR_HEIGHT - 400), glm::vec2(40, 40), glm::vec2(256, 256));
 
   while (!glfwWindowShouldClose(window))
   {

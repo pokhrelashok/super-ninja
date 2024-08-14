@@ -120,27 +120,33 @@ std::pair<int, int> Player::get_current_animation()
 {
   if (state == PLAYER_STATE_IDLE)
   {
-    return std::make_pair(4, 6);
+    // return std::make_pair(4, 6);
+    return std::make_pair(0, 1);
   }
   if (state == PLAYER_STATE_JUMPING)
   {
-    return std::make_pair(3, 12);
+    // return std::make_pair(3, 12);
+    return std::make_pair(0, 12);
   }
   if (state == PLAYER_STATE_WALKING)
   {
-    return std::make_pair(0, 8);
+    // return std::make_pair(0, 8);
+    return std::make_pair(0, 1);
   }
   if (state == PLAYER_STATE_DEAD)
   {
-    return std::make_pair(6, 3);
+    // return std::make_pair(6, 3);
+    return std::make_pair(0, 1);
   }
   if (state == PLAYER_STATE_ATTACK)
   {
-    return std::make_pair(7, 3);
+    // return std::make_pair(7, 3);
+    return std::make_pair(0, 1);
   }
   if (state == PLAYER_STATE_RUN)
   {
-    return std::make_pair(2, 7);
+    // return std::make_pair(2, 7);
+    return std::make_pair(0, 1);
   }
 }
 
