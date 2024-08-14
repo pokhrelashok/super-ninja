@@ -69,7 +69,7 @@ int main()
 
   Sprite background = Sprite(ourShader, backgroundTex, glm::vec2(0, 0), glm::vec2(SCR_WIDTH, SCR_HEIGHT), glm::vec2(800, 800));
   background.isAffectedByGravity = false;
-  Player player = Player(ourShader, playerTex, glm::vec2(0, SCR_HEIGHT - 232), glm::vec2(200, 200), glm::vec2(128, 128));
+  Player player = Player(ourShader, playerTex, glm::vec2(0, SCR_HEIGHT - 400), glm::vec2(200, 200), glm::vec2(128, 128));
 
   while (!glfwWindowShouldClose(window))
   {
@@ -78,8 +78,7 @@ int main()
 
     glClear(GL_COLOR_BUFFER_BIT);
     background.render();
-    player.process_input(keys);
-    player.update();
+    player.update(keys, one.tiles);
     one.draw();
     player.render();
 

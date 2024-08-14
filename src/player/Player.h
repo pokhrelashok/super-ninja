@@ -5,6 +5,7 @@
 #include "../time/Time.h"
 #include <glm/glm.hpp>
 #include <utility>
+#include <vector>
 
 enum PLAYER_STATE
 {
@@ -20,13 +21,12 @@ class Player : public Sprite
 {
 public:
   PLAYER_STATE state;
-  float jumpVelocity = -50.0f;
+  float jumpVelocity = 36.0f * 3;
   Player(Shader &s, Texture &t, glm::vec2 position, glm::vec2 size, glm::vec2 spriteSize);
   void render();
-  void update();
+  void update(bool keys[], std::vector<Sprite> &obstacles);
   std::pair<int, int> get_current_animation();
-  void process_input(bool keys[]);
   void reset_to_idle();
-  bool isGrounded = true;
+  bool isGrounded = false;
   glm::vec2 velocity = glm::vec2(100.0f, 0.0f);
 };

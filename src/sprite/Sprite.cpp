@@ -16,7 +16,7 @@ const float VERTICES[] = {
     1.0f, 1.0f, 1.0f, 1.0f,
     1.0f, 0.0f, 1.0f, 0.0f};
 
-Sprite::Sprite(Shader &s, Texture &t, glm::vec2 position, glm::vec2 size, glm::vec2 spriteSize, glm::vec2 tilePosition) : shader(s), texture(t), position(position), size(size), spriteSize(spriteSize), tilePosition(tilePosition)
+Sprite::Sprite(Shader &s, Texture &t, glm::vec2 position, glm::vec2 size, glm::vec2 spriteSize, glm::vec2 spritePosition) : shader(s), texture(t), position(position), size(size), spriteSize(spriteSize), spritePosition(spritePosition)
 {
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
@@ -51,10 +51,10 @@ void Sprite::render()
   shader.setMatrix4("model", model);
   shader.setMatrix4("projection", projection);
 
-  float topLeftX = (spriteSize.x * tilePosition.y) / texture.width;
-  float topLeftY = (spriteSize.y * tilePosition.x) / texture.height;
-  float middleRightX = (spriteSize.x * (tilePosition.y + 1)) / texture.width;
-  float middleRightY = (spriteSize.y * (tilePosition.x + 1)) / texture.height;
+  float topLeftX = (spriteSize.x * spritePosition.y) / texture.width;
+  float topLeftY = (spriteSize.y * spritePosition.x) / texture.height;
+  float middleRightX = (spriteSize.x * (spritePosition.y + 1)) / texture.width;
+  float middleRightY = (spriteSize.y * (spritePosition.x + 1)) / texture.height;
 
   const float vertices[] = {
       // pos      // tex

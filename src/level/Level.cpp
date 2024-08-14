@@ -62,6 +62,7 @@ void Level::init(std::vector<std::vector<char>> tileData, unsigned int levelWidt
           sprPos = glm::vec2(15, 0);
         else if (tileData[y][x + 1] == 'g')
           sprPos = glm::vec2(15, 2);
+
         Sprite obj(shader, texture, pos, size, glm::vec2(32.0f, 32.0f), sprPos);
         this->tiles.push_back(obj);
       }

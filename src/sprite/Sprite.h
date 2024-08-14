@@ -8,8 +8,8 @@ private:
   unsigned int VAO, VBO;
 
 public:
-  Sprite(Shader &s, Texture &t, glm::vec2 position, glm::vec2 size, glm::vec2 spriteSize, glm::vec2 tilePosition = glm::vec2(0, 0));
-  glm::vec2 position, size, tilePosition;
+  Sprite(Shader &s, Texture &t, glm::vec2 position, glm::vec2 size, glm::vec2 spriteSize, glm::vec2 spriteCoord = glm::vec2(0, 0));
+  glm::vec2 position, size, spritePosition;
   float direction = 1.0f;
   bool isAffectedByGravity = true;
   Shader &shader;

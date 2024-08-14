@@ -9,13 +9,67 @@ int currentFrame = 0;
 float frameTime = 0;
 
 std::pair currentAnim = std::make_pair(0, 0);
-
+Physics physics = Physics();
 const float DURATION_IN_FRAME = 0.20f;
 
 Player::Player(Shader &s, Texture &t, glm::vec2 position, glm::vec2 size, glm::vec2 spriteSize) : Sprite(s, t, position, size, spriteSize), state(PLAYER_STATE_IDLE) {
                                                                                                   };
-void Player::update()
+void Player::update(bool keys[], std::vector<Sprite> &obstacles)
 {
+
+  glm::vec2 newPosition = position;
+
+  if (keys[GLFW_KEY_SPACE] == true && isGrounded)
+  {
+    state = PLAYER_STATE_JUMPING;
+    currentFrame = 0;
+    frameTime = 0;
+    velocity.y = -jumpVelocity;
+  }
+  else if (keys[GLFW_KEY_RIGHT] == true)
+  {
+    if (state != PLAYER_STATE_WALKING)
+    {
+      direction = 1.0f;
+      if (state != PLAYER_STATE_JUMPING && state != PLAYER_STATE_RUN)
+      {
+        state = keys[GLFW_KEY_LEFT_SHIFT] ? PLAYER_STATE_RUN : PLAYER_STATE_WALKING;
+        currentFrame = 0;
+        frameTime = 0;
+      }
+    }
+    newPosition.x += velocity.x * (state == PLAYER_STATE_RUN ? 2 : 1) * Time::delta;
+  }
+  else if (keys[GLFW_KEY_LEFT] == true)
+  {
+    if (state != PLAYER_STATE_WALKING)
+    {
+      direction = -1.0f;
+      if (state != PLAYER_STATE_JUMPING && state != PLAYER_STATE_RUN)
+      {
+        state = keys[GLFW_KEY_LEFT_SHIFT] ? PLAYER_STATE_RUN : PLAYER_STATE_WALKING;
+        currentFrame = 0;
+        frameTime = 0;
+      }
+    }
+    newPosition.x -= velocity.x * (state == PLAYER_STATE_RUN ? 2 : 1) * Time::delta;
+  }
+  else if (keys[GLFW_KEY_F] == true)
+  {
+    state = PLAYER_STATE_ATTACK;
+    currentFrame = 0;
+    frameTime = 0;
+  }
+  else
+  {
+    if ((state != PLAYER_STATE_JUMPING && state != PLAYER_STATE_ATTACK))
+      this->reset_to_idle();
+  }
+
+  if (((state == PLAYER_STATE_JUMPING || state == PLAYER_STATE_ATTACK) && (currentFrame + 1 >= currentAnim.second)))
+    this->reset_to_idle();
+
+  // process animation
   currentAnim = get_current_animation();
   frameTime += Time::delta;
   if (frameTime >= DURATION_IN_FRAME)
@@ -24,21 +78,36 @@ void Player::update()
     frameTime = 0;
   }
   float positionY = position.y;
+
   if (isAffectedByGravity && !isGrounded)
   {
     velocity.y += (GRAVITY * Time::delta) * 10;
     positionY = position.y + (velocity.y * Time::delta);
-    if (positionY + size.y <= 640)
+    newPosition.y = positionY;
+  }
+  spritePosition = glm::vec2(currentAnim.first, currentFrame);
+
+  Collision collision;
+  physics.detectCollision(newPosition, size, obstacles, collision);
+
+  if (collision.hasCollided)
+  {
+    if (collision.bottom)
     {
-      position.y = positionY;
-    }
-    else
-    {
-      isGrounded = true;
       velocity.y = 0;
+      newPosition.y = position.y;
+      isGrounded = true;
+    }
+    if (collision.right || collision.left)
+    {
+      newPosition.x = position.x;
     }
   }
-  tilePosition = glm::vec2(currentAnim.first, currentFrame);
+  else
+  {
+    isGrounded = false;
+  }
+  position = newPosition;
 };
 
 void Player::render()
@@ -73,66 +142,6 @@ std::pair<int, int> Player::get_current_animation()
   {
     return std::make_pair(2, 7);
   }
-}
-
-void Player::process_input(bool keys[])
-{
-  if (keys[GLFW_KEY_SPACE] == true && isGrounded)
-  {
-    state = PLAYER_STATE_JUMPING;
-    currentFrame = 0;
-    frameTime = 0;
-    isGrounded = false;
-    velocity.y = jumpVelocity * 3;
-  }
-  else if (keys[GLFW_KEY_RIGHT] == true)
-  {
-    if (state != PLAYER_STATE_WALKING)
-    {
-      direction = 1.0f;
-      if (state != PLAYER_STATE_JUMPING && state != PLAYER_STATE_RUN)
-      {
-        state = keys[GLFW_KEY_LEFT_SHIFT] ? PLAYER_STATE_RUN : PLAYER_STATE_WALKING;
-        currentFrame = 0;
-        frameTime = 0;
-      }
-    }
-    position.x += velocity.x * (state == PLAYER_STATE_RUN ? 2 : 1) * Time::delta;
-  }
-  else if (keys[GLFW_KEY_LEFT] == true)
-  {
-    if (state != PLAYER_STATE_WALKING)
-    {
-      direction = -1.0f;
-      if (state != PLAYER_STATE_JUMPING && state != PLAYER_STATE_RUN)
-      {
-        state = keys[GLFW_KEY_LEFT_SHIFT] ? PLAYER_STATE_RUN : PLAYER_STATE_WALKING;
-        currentFrame = 0;
-        frameTime = 0;
-      }
-    }
-    position.x -= velocity.x * (state == PLAYER_STATE_RUN ? 2 : 1) * Time::delta;
-  }
-  else if (keys[GLFW_KEY_D] == true)
-  {
-    state = PLAYER_STATE_DEAD;
-    currentFrame = 0;
-    frameTime = 0;
-  }
-  else if (keys[GLFW_KEY_F] == true)
-  {
-    state = PLAYER_STATE_ATTACK;
-    currentFrame = 0;
-    frameTime = 0;
-  }
-  else
-  {
-    if ((state != PLAYER_STATE_JUMPING && state != PLAYER_STATE_ATTACK))
-      this->reset_to_idle();
-  }
-
-  if (((state == PLAYER_STATE_JUMPING || state == PLAYER_STATE_ATTACK) && (currentFrame + 1 >= currentAnim.second)))
-    this->reset_to_idle();
 }
 
 void Player::reset_to_idle()
