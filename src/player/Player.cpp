@@ -94,9 +94,10 @@ void Player::update(bool keys[], std::vector<Sprite> &obstacles)
   {
     if (collision.bottom)
     {
-      velocity.y = 0;
+      velocity.y = -(round((velocity.y / 2) * 100)) / 100;
+      velocity.y = (velocity.y >= -2.0 && velocity.y <= 0) || (velocity.y <= 2.0 && velocity.y >= 0) ? 0 : velocity.y;
       newPosition.y = position.y;
-      isGrounded = true;
+      isGrounded = velocity.y == 0 ? true : false;
     }
     if (collision.right || collision.left)
     {
