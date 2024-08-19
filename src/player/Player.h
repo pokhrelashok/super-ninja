@@ -8,7 +8,8 @@
 #include <utility>
 #include <vector>
 
-enum PLAYER_STATE {
+enum PLAYER_STATE
+{
   PLAYER_STATE_IDLE,
   PLAYER_STATE_WALKING,
   PLAYER_STATE_JUMPING,
@@ -17,13 +18,14 @@ enum PLAYER_STATE {
   PLAYER_STATE_RUN,
 };
 
-class Player : public Sprite {
+class Player : public Sprite
+{
 public:
   PLAYER_STATE state;
-  Ball ball;
+  std::vector<Ball> balls;
   float jumpVelocity = 36.0f * 3;
   Player(Shader &s, Texture &t, glm::vec2 position, glm::vec2 size,
-         glm::vec2 spriteSize);
+         glm::vec2 spriteSize, std::vector<Ball> balls);
   void render();
   void update(bool keys[], std::vector<Sprite> &obstacles);
   std::pair<int, int> get_current_animation();

@@ -1,9 +1,11 @@
 #include "level/Level.h"
 #include "player/Player.h"
 #include "shader/Shader.h"
+#include "ball/Ball.h"
 #include "sprite/Sprite.h"
 #include "texture/Texture.h"
 #include "time/Time.h"
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <iostream>
@@ -13,25 +15,30 @@ const unsigned int SCR_HEIGHT = 640;
 bool keys[1024];
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
-                  int mode) {
+                  int mode)
+{
   // when a user presses the escape key, we set the WindowShouldClose property
   // to true, closing the application
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
-  if (key >= 0 && key < 1024) {
+  if (key >= 0 && key < 1024)
+  {
     if (action == GLFW_PRESS)
       keys[key] = true;
-    else if (action == GLFW_RELEASE) {
+    else if (action == GLFW_RELEASE)
+    {
       keys[key] = false;
     }
   }
 }
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
+{
   glViewport(0, 0, width, height);
 }
 
-int main() {
+int main()
+{
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -40,13 +47,15 @@ int main() {
   GLFWwindow *window =
       glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Super Ninja", 0, 0);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-  if (window == 0) {
+  if (window == 0)
+  {
     std::cout << "Failed to create GLFW window" << std::endl;
     glfwTerminate();
     return -1;
   }
   glfwMakeContextCurrent(window);
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+  {
     std::cout << "Failed to initialize GLAD" << std::endl;
     return -1;
   }
@@ -57,19 +66,28 @@ int main() {
   glfwSetKeyCallback(window, key_callback);
   Shader ourShader = Shader("res/shaders/common.vs", "res/shaders/common.fs");
   Texture backgroundTex = Texture("res/background.jpg");
-  Texture playerTex = Texture("res/ball.png");
+  Texture playerTex = Texture("res/football.png");
   Texture groundTex = Texture("res/ground.png");
   Level one = Level(ourShader, groundTex);
   one.load("res/one.lvl", SCR_WIDTH, SCR_HEIGHT);
+
+  Texture footballTex = Texture("res/football.png");
+  Texture cricketTex = Texture("res/cricket.png");
+  Texture tennisTex = Texture("res/tennis.png");
+
+  Ball football = Ball("football", 0.2, 4.0, 0.2, footballTex);
+  Ball tennis = Ball("tennis", 0.5, 2.0, 0.9, tennisTex);
+  Ball cricket = Ball("cricket", 0.4, 2.0, 1, cricketTex);
 
   Sprite background =
       Sprite(ourShader, backgroundTex, glm::vec2(0, 0),
              glm::vec2(SCR_WIDTH, SCR_HEIGHT), glm::vec2(800, 800));
   background.isAffectedByGravity = false;
   Player player = Player(ourShader, playerTex, glm::vec2(0, SCR_HEIGHT - 400),
-                         glm::vec2(40, 40), glm::vec2(256, 256));
+                         glm::vec2(40, 40), glm::vec2(256, 256), std::vector{football, tennis, cricket});
 
-  while (!glfwWindowShouldClose(window)) {
+  while (!glfwWindowShouldClose(window))
+  {
     Time::tick();
     glfwPollEvents();
 
